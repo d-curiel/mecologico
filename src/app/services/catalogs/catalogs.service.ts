@@ -44,4 +44,13 @@ export class CatalogsService {
       .get<any>(this.base_path, this.httpOptions)
       .pipe(retry(2), catchError(this.handleError));
   }
+
+  findProductosClasificadosByIdCatalogo(idCatalogo: Number): Observable<any> {
+    return this.http
+      .get<any>(
+        this.base_path + idCatalogo + "/ClasificacionProductos",
+        this.httpOptions
+      )
+      .pipe(retry(2), catchError(this.handleError));
+  }
 }

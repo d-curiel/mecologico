@@ -19,6 +19,7 @@ export class CatalogsPage implements OnInit {
   getAllCatalogs() {
     this.catalogsService.findAll().subscribe((response) => {
       this.catalogsData = response.filter((i) => i.Estado !== "Cerrado");
+      console.log("CATALOGOS",this.catalogsData);
     });
   }
 

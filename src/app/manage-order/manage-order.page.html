@@ -1,7 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="catalogs"></ion-back-button>
+      <ion-back-button
+        defaultHref="catalogs"
+        icon="close-outline"
+      ></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button>
@@ -11,4 +14,49 @@
     <ion-title>Realiza tu Pedido</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content> </ion-content>
+<ion-content>
+  <ion-grid *ngIf="!selectedCategorie">
+    <ion-row no-padding>
+      <ion-col size="4" *ngFor="let categorie of categoriasData">
+        <ion-card button="true" (click)="selectCategorie(categorie)">
+          <ion-card-content>{{categorie.Nombre}}</ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="selectedCategorie && !selectedSubcategorie">
+    <ion-row no-padding>
+      <ion-col
+        size="4"
+        *ngFor="let subcategoria of selectedCategorie.subcategorias"
+      >
+        <ion-card button="true" (click)="selectSubcategorie(subcategoria)">
+          <ion-card-content>{{subcategoria.Nombre}}</ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-list *ngIf="selectedSubcategorie">
+    <ion-card
+      *ngFor="let product of selectedSubcategorie.productos"
+      button="false"
+      color="primary"
+    >
+      <ion-card-content>
+        <ion-label>{{product.Descripcion | titlecase }}</ion-label>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+  <ion-fab
+    *ngIf="selectedCategorie || selectedSubcategorie"
+    vertical="bottom"
+    horizontal="start"
+    slot="fixed"
+  >
+    <ion-fab-button color="secondary" (click)="navigateBackOnCatalog()">
+      <ion-icon name="arrow-back"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
