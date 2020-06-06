@@ -1,0 +1,15 @@
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Añadir Producto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()" style="color: red">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+<ion-card>
+  <ion-card-header>{{productName}}</ion-card-header>
+</ion-card>
+<ion-button expand="block" fill="outline"><ion-icon slot="start" name="cart-outline"></ion-icon>Añadir Producto</ion-button>
+</ion-content>

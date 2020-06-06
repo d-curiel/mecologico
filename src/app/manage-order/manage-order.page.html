@@ -40,11 +40,17 @@
   <ion-list *ngIf="selectedSubcategorie">
     <ion-card
       *ngFor="let product of selectedSubcategorie.productos"
-      button="false"
-      color="primary"
-    >
+      button="false" (click)="presentModal(product)"> 
       <ion-card-content>
-        <ion-label>{{product.Descripcion | titlecase }}</ion-label>
+        <ion-badge slot="start">11</ion-badge>
+        <div style="width: 70%; float: left;">
+          <ion-label>{{product.Descripcion | titlecase }}</ion-label>
+        </div>
+        <div style="width: 30%; float: left;">
+          <ion-button style="position: relative; left: 50%; top: 50%;">
+            <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+          </ion-button>
+        </div>
       </ion-card-content>
     </ion-card>
   </ion-list>

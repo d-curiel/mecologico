@@ -1,9 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { CategoriesService } from "../services/orders/categories/categories.service";
 import { CatalogsService } from "../services/catalogs/catalogs.service";
 import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
-import { trigger, transition, style, animate } from '@angular/animations';
+import { ModalController } from "@ionic/angular";
+import { ProductToOrderPage } from '../modals/product-to-order/product-to-order.page';
 @Component({
   selector: "app-manage-order",
   templateUrl: "./manage-order.page.html",
@@ -14,10 +14,11 @@ export class ManageOrderPage implements OnInit {
   categoriasData;
   selectedCategorie = null;
   selectedSubcategorie = null;
-  
+
   constructor(
     private router: Router,
-    private catalogoService: CatalogsService
+    private catalogoService: CatalogsService,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {}
@@ -60,4 +61,15 @@ export class ManageOrderPage implements OnInit {
     }
   }
 
+  async presentModal(product) {
+
+    const modal = await this.modalController.create({
+      component: ProductToOrderPage,
+      cssClass: 'my-custom-class',
+      componentProps: {
+        productName: product.Descripcion
+      }
+    });
+    return await modal.present();
+  }
 }
