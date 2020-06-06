@@ -6,7 +6,7 @@ Hybrid application used for giving support to make orders to their stores.
 
 1. [Node](https://nodejs.org/es/) 
 2. Ionic: `$ npm install -g ionic`
-3. Visual Studio (or similar IDE).
+3. [Visual Studio Code](https://code.visualstudio.com/) (or similar IDE).
 
 ##### Note: Please make sure to run the commands in the same order as below
 
