@@ -18,7 +18,7 @@ Hybrid application used for giving support to make orders to their stores.
 
 ## Running the application
 
-1. (At the root of the project) $ ionic serve
+1. (At the root of the project) `$ ionic serve`
 
 ---
 Coded by [danielcuriel](https://www.linkedin.com/in/curieldaniel7/)
