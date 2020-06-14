@@ -1,1 +1,11 @@
 
+.detail-enabled {
+display: block;
+}
+
+.detail-off {
+    display: none;
+}
+input[type=number]:before {
+    content: "€";
+}

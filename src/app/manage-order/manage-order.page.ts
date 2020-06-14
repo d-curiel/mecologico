@@ -1,24 +1,24 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { CatalogsService } from "../services/catalogs/catalogs.service";
-import { ChangeDetectionStrategy } from "@angular/compiler/src/core";
-import { ModalController } from "@ionic/angular";
-import { ProductToOrderPage } from '../modals/product-to-order/product-to-order.page';
+import { ModalController, PopoverController } from "@ionic/angular";
+import { ProductToOrderPage } from "../modals/product-to-order/product-to-order.page";
 @Component({
   selector: "app-manage-order",
   templateUrl: "./manage-order.page.html",
   styleUrls: ["./manage-order.page.scss"],
 })
 export class ManageOrderPage implements OnInit {
-  changeDetection: ChangeDetectionStrategy.OnPush;
   categoriasData;
   selectedCategorie = null;
   selectedSubcategorie = null;
+  order = [];
 
   constructor(
     private router: Router,
     private catalogoService: CatalogsService,
-    private modalController: ModalController
+    public popoverController: PopoverController,
+    public modalController: ModalController
   ) {}
 
   ngOnInit() {}
@@ -43,10 +43,37 @@ export class ManageOrderPage implements OnInit {
           };
         });
       },
-      (error) => {}
+      (error) => {},
+      () => {
+        //CHECKEAR SI YA HABÍA ALGÚN DATO PREVIO (SI ES UNA EDICIÓN DE PEDIDO)
+        this.initAmountToProducts();
+      }
     );
   }
+  initAmountToProducts() {
+    this.categoriasData.forEach((category) => {
+      category.subcategorias.forEach((subcategory) => {
+        subcategory.productos.forEach((product) => {
+          product.amount = 0;
+        });
+      });
+    });
+  }
 
+  checkCoherenceOrder() {
+    this.categoriasData.forEach((category) => {
+      category.subcategorias.forEach((subcategory) => {
+        subcategory.productos.forEach((product) => {
+          let foundProudct = this.order.find(
+            (orderProduct) => orderProduct.Id === product.Id
+          );
+          if (!foundProudct) {
+            product.amount = 0;
+          }
+        });
+      });
+    });
+  }
   selectCategorie(categorie) {
     this.selectedCategorie = categorie;
   }
@@ -60,16 +87,58 @@ export class ManageOrderPage implements OnInit {
       this.selectedCategorie = null;
     }
   }
+  checkOrder(modifiedProduct) {
+    let foundProudct = this.order.find(
+      (product) => product.Id === modifiedProduct.Id
+    );
 
-  async presentModal(product) {
+    if (!foundProudct && modifiedProduct.amount !== 0) {
+      this.order.push(modifiedProduct);
+    } else {
+      if (modifiedProduct.amount === null || modifiedProduct.amount <= 0) {
+        this.deleteProduct(foundProudct);
+      } else {
+        let index = this.order.indexOf(foundProudct);
+        this.order[index] = modifiedProduct;
+      }
+    }
+  }
 
+  addAmount(product) {
+    product.amount++;
+  }
+  removeAmount(product) {
+    if (product.amount < 1) {
+      product.amount = 0;
+    } else {
+      product.amount--;
+    }
+  }
+
+  async presentPopover(ev: any) {
     const modal = await this.modalController.create({
       component: ProductToOrderPage,
-      cssClass: 'my-custom-class',
-      componentProps: {
-        productName: product.Descripcion
+      componentProps: { order: this.order },
+    });
+    modal.onDidDismiss().then((dataReturned) => {
+      if (dataReturned !== null) {
+        this.order = dataReturned.data.order;
+        this.checkCoherenceOrder();
       }
     });
     return await modal.present();
   }
+
+  findIndexToUpdate(modifiedProduct) {
+    return modifiedProduct.id === this;
+  }
+
+  deleteProduct(product) {
+    const index: number = this.order.indexOf(product);
+    if (index !== -1) {
+      this.order.splice(index, 1);
+    }
+  }
+
+
 }

@@ -1,14 +1,17 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        defaultHref="catalogs"
-        icon="close-outline"
-      ></ion-back-button>
+      <ion-button
+        *ngIf="selectedCategorie || selectedSubcategorie"
+        (click)="navigateBackOnCatalog()"
+      >
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+      <ion-button (click)="presentPopover($event)">
+        <ion-icon size="large" name="cart-outline"></ion-icon>
+        <ion-badge>{{order.length}}</ion-badge>
       </ion-button>
     </ion-buttons>
     <ion-title>Realiza tu Pedido</ion-title>
@@ -18,7 +21,16 @@
   <ion-grid *ngIf="!selectedCategorie">
     <ion-row no-padding>
       <ion-col size="4" *ngFor="let categorie of categoriasData">
-        <ion-card button="true" (click)="selectCategorie(categorie)">
+        <ion-card
+          button="true"
+          (click)="selectCategorie(categorie)"
+          style="
+            height: 6rem;
+            text-align: center;
+            display: flex;
+            margin: 0.3rem;
+          "
+        >
           <ion-card-content>{{categorie.Nombre}}</ion-card-content>
         </ion-card>
       </ion-col>
@@ -30,39 +42,69 @@
         size="4"
         *ngFor="let subcategoria of selectedCategorie.subcategorias"
       >
-        <ion-card button="true" (click)="selectSubcategorie(subcategoria)">
+        <ion-card
+          button="true"
+          (click)="selectSubcategorie(subcategoria)"
+          style="
+            height: 6rem;
+            text-align: center;
+            display: flex;
+            margin: 0.3rem;
+          "
+        >
           <ion-card-content>{{subcategoria.Nombre}}</ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
 
-  <ion-list *ngIf="selectedSubcategorie">
+  <ion-list
+    *ngIf="selectedSubcategorie"
+    inset="true"
+    style="margin-left: 0.5rem; margin-right: 0.5rem;"
+  >
     <ion-card
-      *ngFor="let product of selectedSubcategorie.productos"
-      button="false" (click)="presentModal(product)"> 
+      *ngFor="let product of selectedSubcategorie.productos; let i = index"
+    >
+      <ion-card-header>
+        <ion-card-title>{{product.Descripcion | titlecase }}</ion-card-title>
+        <ion-card-subtitle
+          >{{product.PVP}} {{product.UnidadVenta}}</ion-card-subtitle
+        >
+      </ion-card-header>
       <ion-card-content>
-        <ion-badge slot="start">11</ion-badge>
-        <div style="width: 70%; float: left;">
-          <ion-label>{{product.Descripcion | titlecase }}</ion-label>
-        </div>
-        <div style="width: 30%; float: left;">
-          <ion-button style="position: relative; left: 50%; top: 50%;">
-            <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-card-content>
+        <ion-item>
+          <ion-label position="floating">Cantidad</ion-label>
+          <ion-input
+            clearInput="true"
+            type="number"
+            inputmode="decimal"
+            [(ngModel)]="product.amount"
+            (ionChange)="checkOrder(product)"
+            min="0"
+          ></ion-input>
+          <ion-buttons slot="end">
+            <ion-button (click)="addAmount(product)" shape="round" fill="outline" color="primary">
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+            </ion-button>
+            <ion-button  shape="round" fill="outline" color="danger"
+              [disabled]="product.amount === 0 || !product.amount"
+              (click)="removeAmount(product)"
+            >
+              <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-item>
+        <div>
+          <ion-item>
+            <ion-label>
+              <h4>
+                Precio: {{ product.amount*product.PVP | number : '1.2-2'}} €
+              </h4>
+            </ion-label>
+          </ion-item>
+        </div></ion-card-content
+      >
     </ion-card>
   </ion-list>
-
-  <ion-fab
-    *ngIf="selectedCategorie || selectedSubcategorie"
-    vertical="bottom"
-    horizontal="start"
-    slot="fixed"
-  >
-    <ion-fab-button color="secondary" (click)="navigateBackOnCatalog()">
-      <ion-icon name="arrow-back"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
 </ion-content>

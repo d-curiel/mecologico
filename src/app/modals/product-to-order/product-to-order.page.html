@@ -1,15 +1,50 @@
-<ion-header translucent>
+<ion-header>
   <ion-toolbar>
-    <ion-title>Añadir Producto</ion-title>
+    <ion-title>Pedido</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="dismissModal()" style="color: red">Cancelar</ion-button>
+      <ion-button (click)="dismissModal()">CERRAR</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<ion-content>
-<ion-card>
-  <ion-card-header>{{productName}}</ion-card-header>
-</ion-card>
-<ion-button expand="block" fill="outline"><ion-icon slot="start" name="cart-outline"></ion-icon>Añadir Producto</ion-button>
+<ion-content padding>
+  <ion-list *ngIf="order.length > 0" inset="true" lines="inset">
+    <ion-list-header>
+      <ion-title>Total: {{totalPrize | number : '1.2-2'}}€</ion-title>
+    </ion-list-header>
+    <ion-item *ngFor="let product of order">
+      <ion-label style="word-break: break-word; white-space: pre-line;">
+        <h2>
+          Producto: {{ product.Descripcion }}
+        </h2>
+        <h3>
+          Cantidad: {{ product.amount }}
+        </h3>
+        <h4>
+          Precio: {{  product.amount*product.PVP | number : '1.2-2'}} €
+        </h4>
+      </ion-label>
+      <ion-buttons slot="end">
+        <ion-button (click)="deleteProduct(product)"><ion-icon name="trash-outline"></ion-icon> </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+  <ion-label *ngIf="order.length === 0"
+    >No tiene productos en su Pedido
+  </ion-label>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-button color="danger" (click)="presentAlertConfirm()"
+          >CANCELAR PEDIDO<ion-icon name="close-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button color="success"
+        >PORCESAR PEDIDO<ion-icon name="checkbox-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
