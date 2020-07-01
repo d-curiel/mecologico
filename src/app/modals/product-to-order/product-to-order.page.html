@@ -14,7 +14,7 @@
     <ion-item *ngFor="let product of order">
       <ion-label style="word-break: break-word; white-space: pre-line;">
         <h2>
-          Producto: {{ product.Descripcion }}
+          Producto: {{ product.Denominacion | titlecase }}
         </h2>
         <h3>
           Cantidad: {{ product.amount }}
@@ -40,9 +40,7 @@
           >CANCELAR PEDIDO<ion-icon name="close-circle-outline"></ion-icon>
         </ion-button>
       </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button color="success"
+      <ion-button color="success" (click)="realizarPedido()"
         >PORCESAR PEDIDO<ion-icon name="checkbox-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

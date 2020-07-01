@@ -20,8 +20,9 @@
 <ion-content>
   <ion-grid *ngIf="!selectedCategorie">
     <ion-row no-padding>
-      <ion-col size="4" *ngFor="let categorie of categoriasData">
+      <ion-col size="4" *ngFor="let categorie of categoriasData; let k = index">
         <ion-card
+          style="--animation-order: {{k}};"
           button="true"
           (click)="selectCategorie(categorie)"
           style="
@@ -31,7 +32,7 @@
             margin: 0.3rem;
           "
         >
-          <ion-card-content>{{categorie.Nombre}}</ion-card-content>
+          <ion-card-content>{{categorie.Nombre | titlecase }}</ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
@@ -40,9 +41,10 @@
     <ion-row no-padding>
       <ion-col
         size="4"
-        *ngFor="let subcategoria of selectedCategorie.subcategorias"
+        *ngFor="let subcategoria of selectedCategorie.subcategorias; let j = index"
       >
         <ion-card
+          style="--animation-order: {{j}};"
           button="true"
           (click)="selectSubcategorie(subcategoria)"
           style="
@@ -52,7 +54,7 @@
             margin: 0.3rem;
           "
         >
-          <ion-card-content>{{subcategoria.Nombre}}</ion-card-content>
+          <ion-card-content>{{subcategoria.Nombre | titlecase }}</ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
@@ -64,10 +66,11 @@
     style="margin-left: 0.5rem; margin-right: 0.5rem;"
   >
     <ion-card
+      style="--animation-order: {{i}};"
       *ngFor="let product of selectedSubcategorie.productos; let i = index"
     >
       <ion-card-header>
-        <ion-card-title>{{product.Descripcion | titlecase }}</ion-card-title>
+        <ion-card-title>{{product.Denominacion | titlecase }}</ion-card-title>
         <ion-card-subtitle
           >{{product.PVP}} {{product.UnidadVenta}}</ion-card-subtitle
         >
@@ -84,14 +87,22 @@
             min="0"
           ></ion-input>
           <ion-buttons slot="end">
-            <ion-button (click)="addAmount(product)" shape="round" fill="outline" color="primary">
-              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-            </ion-button>
-            <ion-button  shape="round" fill="outline" color="danger"
+            <ion-button
+              shape="round"
+              fill="outline"
+              color="danger"
               [disabled]="product.amount === 0 || !product.amount"
               (click)="removeAmount(product)"
             >
               <ion-icon slot="icon-only" name="remove-outline"></ion-icon>
+            </ion-button>
+            <ion-button
+              (click)="addAmount(product)"
+              shape="round"
+              fill="outline"
+              color="primary"
+            >
+              <ion-icon slot="icon-only" name="add-outline"></ion-icon>
             </ion-button>
           </ion-buttons>
         </ion-item>

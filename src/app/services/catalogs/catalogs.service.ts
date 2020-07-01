@@ -42,7 +42,7 @@ export class CatalogsService {
   findAll(): Observable<any> {
     return this.http
       .get<any>(this.base_path, this.httpOptions)
-      .pipe(retry(2), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
   }
 
   findProductosClasificadosByIdCatalogo(idCatalogo: Number): Observable<any> {
@@ -51,6 +51,6 @@ export class CatalogsService {
         this.base_path + idCatalogo + "/ClasificacionProductos",
         this.httpOptions
       )
-      .pipe(retry(2), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
   }
 }

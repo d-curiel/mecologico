@@ -24,7 +24,7 @@ export class PersonalDataService {
         this.base_path + idCliente,
         this.httpOptions
       )
-      .pipe(retry(2), catchError(this.handleError));
+      .pipe(catchError(this.handleError));
   }
 
     // Handle API errors

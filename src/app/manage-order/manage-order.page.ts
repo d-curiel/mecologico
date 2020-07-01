@@ -1,7 +1,13 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { CatalogsService } from "../services/catalogs/catalogs.service";
-import { ModalController, PopoverController } from "@ionic/angular";
+import {
+  ModalController,
+  PopoverController,
+  ToastController,
+  NavController,
+  LoadingController,
+} from "@ionic/angular";
 import { ProductToOrderPage } from "../modals/product-to-order/product-to-order.page";
 @Component({
   selector: "app-manage-order",
@@ -14,15 +20,20 @@ export class ManageOrderPage implements OnInit {
   selectedSubcategorie = null;
   order = [];
 
+  public loading;
   constructor(
     private router: Router,
     private catalogoService: CatalogsService,
     public popoverController: PopoverController,
-    public modalController: ModalController
+    public modalController: ModalController,
+    public toastController: ToastController,
+    private navCtrl: NavController,
+    public loadingController: LoadingController
   ) {}
 
   ngOnInit() {}
   ionViewWillEnter() {
+    this.presentLoading();
     /*
     AQUÍ RESCATARÍAMOS EL ID DEL CATÁLOGO SELECCIONADO
     */
@@ -30,6 +41,8 @@ export class ManageOrderPage implements OnInit {
   }
 
   initManageOrder() {
+    //CHECKEAR SI YA HABÍA ALGÚN DATO PREVIO (SI ES UNA EDICIÓN DE PEDIDO)
+
     this.catalogoService.findProductosClasificadosByIdCatalogo(78).subscribe(
       (response) => {
         this.categoriasData = response.map((categoria) => {
@@ -37,20 +50,29 @@ export class ManageOrderPage implements OnInit {
             Id: categoria.Id,
             Nombre: categoria.Nombre,
             Orden: categoria.Orden,
+            FechaModificacion: categoria.FechaModificacion,
             subcategorias: categoria.subcategorias.filter((subcategoria) =>
               subcategoria.hasOwnProperty("productos")
             ),
           };
         });
       },
-      (error) => {},
+      (error) => {
+        console.log("ERROR");
+        this.presentToast();
+        this.navCtrl.back();
+        this.loading.dismiss();
+      },
       () => {
-        //CHECKEAR SI YA HABÍA ALGÚN DATO PREVIO (SI ES UNA EDICIÓN DE PEDIDO)
+        this.loading.dismiss();
         this.initAmountToProducts();
       }
     );
   }
   initAmountToProducts() {
+    this.categoriasData = this.categoriasData.filter(
+      (categoria) => categoria.subcategorias.length > 0
+    );
     this.categoriasData.forEach((category) => {
       category.subcategorias.forEach((subcategory) => {
         subcategory.productos.forEach((product) => {
@@ -75,9 +97,11 @@ export class ManageOrderPage implements OnInit {
     });
   }
   selectCategorie(categorie) {
+    console.log("CATEGORIA: ", categorie);
     this.selectedCategorie = categorie;
   }
   selectSubcategorie(subcategorie) {
+    console.log("SUBCATEGORIA: ", subcategorie);
     this.selectedSubcategorie = subcategorie;
   }
   navigateBackOnCatalog() {
@@ -140,5 +164,22 @@ export class ManageOrderPage implements OnInit {
     }
   }
 
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: "Your settings have been saved.",
+      duration: 2000,
+    });
+    toast.present();
+  }
 
+  async presentLoading() {
+    this.loading = await this.loadingController.create({
+      cssClass: "my-custom-class",
+      message: "Please wait...",
+      duration: 2000,
+    });
+    await this.loading.present();
+
+    const { role, data } = await this.loading.onDidDismiss();
+  }
 }

@@ -1,5 +1,7 @@
 {
   "name": "mecologico",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

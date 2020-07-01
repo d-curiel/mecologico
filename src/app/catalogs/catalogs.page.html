@@ -8,25 +8,47 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-card
-      *ngFor="let catalogo of catalogsData"
-      button="false"
-      color="primary"
-    >
-      <ion-card-header>
-        <ion-card-title>{{catalogo.Nombre}}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <p>
-          <ion-label>Fecha: {{catalogo.Fecha | date:'dd/MM/yyyy'}}</ion-label>
-        </p>
-        <p>
-          <ion-label>Estado: {{catalogo.Estado}}</ion-label>
-        </p>
+  <ion-list *ngIf="catalogsData">
+    <div *ngFor="let catalogo of catalogsData; let i= index">
+      <ion-card
+        button="false"
+        color="primary"
+        style="--animation-order: {{i}};"
+      >
+        <ion-card-header>
+          <ion-card-title>{{catalogo.Nombre}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>
+            <ion-label>Fecha: {{catalogo.Fecha | date:'dd/MM/yyyy'}}</ion-label>
+          </p>
+          <p>
+            <ion-label>Estado: {{catalogo.Estado}}</ion-label>
+          </p>
 
-        <ion-button color="secondary" expand="block" (click)="goToCreateNewOrder()">Realizar Pedido</ion-button>
-      </ion-card-content>
-    </ion-card>
+          <ion-button
+            color="secondary"
+            expand="block"
+            (click)="goToCreateNewOrder(catalogo)"
+            >Realizar Pedido</ion-button
+          >
+          <ion-button
+            color="primary"
+            expand="block"
+            (click)="mostrarPedidos(catalogo)"
+            >Ver Pedidos</ion-button
+          >
+        </ion-card-content>
+      </ion-card>
+      <ion-list class="lista" *ngIf="!catalogo.collapsed">
+        <ion-item *ngFor="let order of catalogo.ordersDone; let anim = index" class="prueba"  style="--animation-order: {{anim}};">
+        <ion-label>{{order.Id}}</ion-label>
+        <ion-label>{{order.Cliente}}</ion-label>
+        <ion-label>{{order.TotalAlbaran}}</ion-label>
+        
+        </ion-item>
+      </ion-list>
+    </div>
   </ion-list>
+  <ion-item *ngIf="!catalogsData">NO Data</ion-item>
 </ion-content>
